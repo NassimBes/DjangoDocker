@@ -43,7 +43,11 @@ DATABASES = {
 Run the migrate and make superuser.
     ```
     docker-compose run python ./manage.py migrate
+    ```
+    ```
     docker-compose run python ./manage.py createsuperuser
+    ```
+    ```
     docker-compose manage.py collectstatic
     ```
 
