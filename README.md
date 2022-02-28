@@ -4,7 +4,8 @@
 
 
 # Start Djnago Project
-    ```docker-compose run python django-admin.py startproject app```
+
+```docker-compose run python django-admin.py startproject app```
 
 
 # Connection to MySQL
