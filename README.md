@@ -41,27 +41,23 @@ DATABASES = {
 
 
 Run the migrate and make superuser.
-    ```
-    docker-compose run python ./manage.py migrate
-    ```
-    ```
-    docker-compose run python ./manage.py createsuperuser
-    ```
-    ```
-    docker-compose manage.py collectstatic
-    ```
+```
+docker-compose run python ./manage.py migrate
+docker-compose run python ./manage.py createsuperuser
+docker-compose manage.py collectstatic
+```
 
 
 add below sentences at settings.py
-    ```
-    STATIC_URL = '/static/'
-    STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'web/static'),
-    ]
-    STATIC_ROOT =  os.path.join(BASE_DIR, 'static')
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-    ```
+```
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+os.path.join(BASE_DIR, 'web/static'),
+]
+STATIC_ROOT =  os.path.join(BASE_DIR, 'static')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+```
 
 Run Command
     ```docker-compose run python ./manage.py collectstatic```
