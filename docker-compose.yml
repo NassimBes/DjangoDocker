@@ -1,0 +1,84 @@
+version: '3'
+
+python:
+    build: ./python
+    command: uwsgi --socket :8001 --module app.wsgi --py-autoreload 1 --logto /tmp/mylog.log
+    container_name: '${DJANGO_PROJECT_NAME}-python'
+    volumes: 
+      - ${PROJECT_DIR-./code}:/code
+      - ${STATIC_DIR-./static}:/static
+      - ${MEDIA_DIR-./media}:/media
+    expose:
+      - "${HOST_MACHINE_DJANGO_PORT}"
+    depends_on:
+      - db
+    networks:
+      djangoproject:
+        ipv4_address: 192.168.24.13
+
+
+db:
+    image: mysql:5.7
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    container_name: '${DJANGO_PROJECT_NAME}-db'
+    ports:
+      - "${HOST_MACHINE_MYSQL_PORT}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - ${MYSQL_DIR-./mysql}:/var/lib/mysql
+      - ${SQL_INITFILE-./sql}:/docker-entrypoint-initdb.d
+    networks:
+      djangoproject:
+        ipv4_address: 192.168.24.14
+
+
+phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: '${DJANGO_PROJECT_NAME}-phpmyadmin'
+    links:
+      - database
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - '${HOST_MACHINE_PMA_PORT}:80'
+    volumes: 
+      - /sessions
+      - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/conf.d/php-phpmyadmin.ini
+    networks:
+      cdg_net:
+         ipv4_address: 192.168.24.14
+
+
+nginx:
+    image: nginx:1.13
+    container_name: '${DJANGO_PROJECT_NAME}-nginx'
+    ports:
+      - "${HOST_MACHINE_NGINX_UNSECURE_PORT}:8000"
+      - "${HOST_MACHINE_NGINX_SECURE_PORT}:443"
+    volumes:
+      - ${NGINX_CONFIG-./nginx/conf}:/etc/nginx/conf.d
+      - ${NGINX_UWSGIPARAMS-./nginx/uwsgi_params}:/etc/nginx/uwsgi_params
+      - ${STATIC_REF-./static}:/static
+      - ${MEDIA_REF-./media}:/media
+    depends_on:
+      - python
+    networks:
+      djangoproject:
+        ipv4_address: 192.168.24.16
+
+networks:
+    djangoproject:
+        ipam:
+            driver: default
+            config:
+                - subnet: 192.168.24.0/24
