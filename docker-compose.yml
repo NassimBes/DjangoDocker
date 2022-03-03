@@ -1,6 +1,7 @@
 version: '3'
 
-python:
+services:
+  python:
     build: ./python
     command: uwsgi --socket :8001 --module app.wsgi --py-autoreload 1 --logto /tmp/mylog.log
     container_name: '${DJANGO_PROJECT_NAME}-python'
@@ -17,7 +18,7 @@ python:
         ipv4_address: 192.168.24.13
 
 
-db:
+  db:
     image: mysql:5.7
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     container_name: '${DJANGO_PROJECT_NAME}-db'
@@ -36,7 +37,7 @@ db:
         ipv4_address: 192.168.24.14
 
 
-phpmyadmin:
+  phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: '${DJANGO_PROJECT_NAME}-phpmyadmin'
     links:
@@ -55,11 +56,11 @@ phpmyadmin:
       - /sessions
       - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/conf.d/php-phpmyadmin.ini
     networks:
-      cdg_net:
-         ipv4_address: 192.168.24.14
+      djangoproject:
+          ipv4_address: 192.168.24.14
 
 
-nginx:
+  nginx:
     image: nginx:1.13
     container_name: '${DJANGO_PROJECT_NAME}-nginx'
     ports:
@@ -77,8 +78,8 @@ nginx:
         ipv4_address: 192.168.24.16
 
 networks:
-    djangoproject:
-        ipam:
-            driver: default
-            config:
-                - subnet: 192.168.24.0/24
+  djangoproject:
+      ipam:
+          driver: default
+          config:
+              - subnet: 192.168.24.0/24
