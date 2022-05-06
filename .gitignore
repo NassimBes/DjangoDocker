@@ -1,7 +1,10 @@
 mysql/*
 
-static/
-static/*
-code/*
 
-.env
+
+code/static
+code/media
+code/app/__pycache__
+
+
+.env*
