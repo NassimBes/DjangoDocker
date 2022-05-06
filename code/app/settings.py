@@ -13,9 +13,7 @@ SECRET_KEY = "jkm1ghT9ez8ZcbQL42GtB730uAFasrOwoiNM6vCKRHJdSnqpfl5IxVXD"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG') == "True"
 
-ALLOWED_HOSTS = [os.environ.get('DOMAIN'),]
-if DEBUG:
-    ALLOWED_HOSTS = ["*",]
+ALLOWED_HOSTS = []
 
 
 # Redirect to HTTPS by default, unless explicitly disabled
@@ -184,7 +182,6 @@ LANGUAGE_CODE = 'en'
 
 LANGUAGES = [
     ('en', 'English'),
-    ('fr', 'French'),
 ]
 
 TIME_ZONE = 'UTC'
