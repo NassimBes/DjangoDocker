@@ -14,7 +14,7 @@ services:
     depends_on:
       - db
     env_file:
-      - code/.env-local
+      - code/app/.env-local
       - .env
     networks:
       djangoproject:
@@ -40,7 +40,23 @@ services:
         ipv4_address: 192.168.24.14
 
 
-
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: '${DJANGO_PROJECT_NAME}-phpmyadmin'
+    links:
+      - db
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+      PMA_USER: root
+    ports:
+      - '${HOST_MACHINE_PMA_PORT}:81'
+    volumes: 
+      - /sessions
+      - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/conf.d/php-phpmyadmin.ini
+    networks:
+      djangoproject:
+          ipv4_address: 192.168.24.15
 
 
   nginx:
